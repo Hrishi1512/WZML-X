@@ -241,11 +241,10 @@ async def load_configurations():
         )
     ).wait()
 
-    PORT = getenv("PORT", "") or Config.BASE_URL_PORT
-    if Config.BASE_URL:
-        await create_subprocess_shell(
-            f"gunicorn -k uvicorn.workers.UvicornWorker -w 1 web.wserver:app --bind 0.0.0.0:{PORT}"
-        )
+    PORT = environ.get("PORT") or environ.get("BASE_URL_PORT", 80)
+    await create_subprocess_shell(
+        f"gunicorn -k uvicorn.workers.UvicornWorker -w 1 web.wserver:app --bind 0.0.0.0:{PORT}",
+    )
 
     if await aiopath.exists("cfg.zip"):
         if await aiopath.exists("/JDownloader/cfg"):
